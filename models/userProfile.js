@@ -6,12 +6,12 @@ const UserProfileSchema = new mongoose.Schema({
     fullName:       {type:String, required:true},
     userType:       {type:String, required:true},
     phone:          {type:String, required:true},
-    DOB:            {type:Date, required:true},
-    registerDate:   {type:Date, required:true},
+    DOB:            {type:String,  },
+    registerDate:   {type:Date,   default:Date.now() },
     numberOfTrips:  {type:Number},
     numberOfKms:    {type:Number},
     avatar:         {type:Boolean},
-    isActive:       {type:Boolean, required:true},
+    isActive:       {type:Boolean, default: true},
 })
 const UserProfile = mongoose.model('Profile',UserProfileSchema)
 module.exports = {

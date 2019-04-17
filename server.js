@@ -1,19 +1,25 @@
 const express = require('express')
 const mongoose = require('mongoose')
+const passport = require('passport')
+
+require('dotenv').config()
 
 /** Connect mongooseDB */
-const MONGO_URI = 'mongodb://localhost:27017/xedike'
-mongoose.connect(MONGO_URI, { useNewUrlParser: true })
+
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true })
     .then(console.log('Connected to FB !'))
     .catch(console.log)
 /** Init Server */
 const app = express();
-app.use('/api/users', require('./routes/api/usersAPI'))
 /**MiddleWare Parser */
 app.use(express.urlencoded({extended:false}));
 app.use(express.json())
+app.use('/api/users', require('./routes/api/usersAPI'))
 
-const port = process.env.PORT || 5000
+
+app.use(passport.initialize());
+require('./config/passport')(passport)
+const port = process.env.PORT
 app.listen(port, () =>{
     console.log("Server Connected !!!")
 })
