@@ -22,7 +22,7 @@ app.use(passport.initialize());
 require('./config/passport')(passport)
 
 app.use('/uploads',express.static('uploads'))
-const port = 6969
+const port = process.env.PORT
 app.listen(port, () =>{
     console.log("Server Connected !!!")
 })
