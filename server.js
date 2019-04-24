@@ -6,7 +6,7 @@ require('dotenv').config()
 
 /** Connect mongooseDB */
 
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true })
+mongoose.connect("mongodb+srv://adminQ:Quoc@1996>@xedikke-vfhf3.gcp.mongodb.net/test?retryWrites=true", { useNewUrlParser: true })
     .then(console.log('Connected to FB !'))
     .catch(console.log)
 /** Init Server */
@@ -22,7 +22,7 @@ app.use(passport.initialize());
 require('./config/passport')(passport)
 
 app.use('/uploads',express.static('uploads'))
-const port = process.env.PORT
+const port = 6969
 app.listen(port, () =>{
     console.log("Server Connected !!!")
 })
