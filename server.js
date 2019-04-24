@@ -15,12 +15,14 @@ const app = express();
 app.use(express.urlencoded({extended:false}));
 app.use(express.json())
 app.use('/api/users', require('./routes/api/usersAPI'))
-
-
-
+//passport
 app.use(passport.initialize());
 require('./config/passport')(passport)
 
+console.log(__dirname + 'public');
+app.use(express.static(__dirname + '/public'));
+
+//Upload FILE
 app.use('/uploads',express.static('uploads'))
 const port = process.env.PORT
 app.listen(port, () =>{
