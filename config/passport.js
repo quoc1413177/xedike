@@ -8,7 +8,7 @@ opts.secretOrKey = 'cybersoftA'
 
 module.exports = (passport) =>{
     passport.use( new JwtStrategy(opts, function(jwt_payload,done){
-        console.log(jwt_payload)
+        console.log("parse jwt_payload: ",jwt_payload)
         UserProfile.findOne({ _id: jwt_payload.id },function(err,user){
             if(err){
                 return done(err,false);

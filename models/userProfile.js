@@ -10,7 +10,7 @@ const UserProfileSchema = new mongoose.Schema({
     registerDate:   {type:Date,   default:Date.now() },
     numberOfTrips:  {type:Number},
     numberOfKms:    {type:Number},
-    avatar:         {type:Boolean},
+    avatar:         {type:String},
     isActive:       {type:Boolean, default: true},
 })
 const UserProfile = mongoose.model('Profile',UserProfileSchema)

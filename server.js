@@ -17,8 +17,11 @@ app.use(express.json())
 app.use('/api/users', require('./routes/api/usersAPI'))
 
 
+
 app.use(passport.initialize());
 require('./config/passport')(passport)
+
+app.use('/uploads',express.static('uploads'))
 const port = process.env.PORT
 app.listen(port, () =>{
     console.log("Server Connected !!!")
