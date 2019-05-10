@@ -1,17 +1,17 @@
 const mongoose = require('mongoose')
 
 const UserProfileSchema = new mongoose.Schema({
-    email:          {type:String, required:true},
-    password:       {type:String, required:true},
-    fullName:       {type:String, required:true},
-    userType:       {type:String, required:true},
-    phone:          {type:String, required:true},
+    email:          {type:String},
+    password:       {type:String},
+    fullName:       {type:String},
+    userType:       {type:String},
+    phone:          {type:String},
     DOB:            {type:String,  },
     registerDate:   {type:Date,   default:Date.now() },
     numberOfTrips:  {type:Number},
     numberOfKms:    {type:Number},
     avatar:         {type:String},
-    isActive:       {type:Boolean, default: true},
+    isActive:       {type:Boolean},
 })
 const UserProfile = mongoose.model('Profile',UserProfileSchema)
 module.exports = {

@@ -6,7 +6,8 @@ const multer = require('multer')
 
 const router = express.Router()
 const {UserProfile} = require('../../models/userProfile')
-const {authorizing} = require('../../config/auth')
+const {authorizing,authenticating} = require('../../config/auth')
+const validateRegisterInput = require('../../config/validator')
 /**
  * api:     /api/users/register
  * desc:    registeration API
@@ -15,10 +16,11 @@ const {authorizing} = require('../../config/auth')
 
 router.post('/register', (req,res)=>{
     //console.log(UserProfile)
-    //console.log(req.body)
-    const {email, password, fullName, phone, userType,registerDate,DOB} = req.body;
+    console.log(req.body)
+    const {email, password, fullName, phone, password2,registerDate,DOB} = req.body;
     
     const {isValid,errors} = validateRegisterInput(req.body)
+    console.log(isValid,errors)
     if(!isValid) return res.status(400).json(errors)
     
     UserProfile.findOne(
@@ -29,11 +31,12 @@ router.post('/register', (req,res)=>{
         if(user) {
             if (user.email == email) errors.email = "Email existed"
             if (user.password == password) errors.password = "Password existed"
+            console.log('userNotOK')
             return res.status(400).json(errors)
         }
 
         /**User Not Existed */
-        const newUser = new UserProfile({email, password, fullName, phone,userType,registerDate, DOB})
+        const newUser = new UserProfile({email, password,password2, fullName, phone,registerDate, DOB})
         bcrypt.genSalt(10, (err,salt)=>{
             /**Handle Error genSalt */
             if(err) return res.status(err)
@@ -43,11 +46,17 @@ router.post('/register', (req,res)=>{
                 if(err) return res.status(err);
                 
                 newUser.password = hash;
+                console.log('hashOK')
                 newUser.save()
                 .then(user =>{
+                    console.log('saveOK')
                     res.status(200).json(user)
                 })/**Handle Error Cannot save to DB */
-                .catch(err => res.status(400).json(err))
+                .catch(err =>{
+                    console.log(err);
+                    res.status(400).json(err)
+                    
+                })
             })
         })
     })
@@ -61,7 +70,7 @@ router.post('/register', (req,res)=>{
 
 router.post('/login',(req,res)=>{
     console.log(req.body);
-    const {email,password} = req.body;
+    const {email,password,fingerprint} = req.body;
     UserProfile.findOne({
         email: email
     })
@@ -81,14 +90,16 @@ router.post('/login',(req,res)=>{
                         usertype: user.userType,
                         fullname: user.fullName
                     }
+                    //create token for authentication and expires
                     jwt.sign(
                         payload,
-                        "cybersoftA",
+                        "cybersoftA" +fingerprint,
                         (err,token) =>{
                             if(err) return res.status(400).json(err)
                             res.status(200).json({
                                 msg:"Login Success",
-                                token:"Bearer" + token
+                                // token:"Bearer" + token
+                                token:token
                             })
                         }
                     )
@@ -96,6 +107,12 @@ router.post('/login',(req,res)=>{
                 .catch(err => res.status(400).json(err))
         })
 })
+
+//Test ReactStrap - Register
+router.post('/test-regis',(req,res)=>{
+    return res.status(200).json({msg:'REGISTER LINK OK!!!'})
+    }
+)
 //Cơ bản của passport
 router.post('/test',
     (req,res,next)=>{
@@ -108,12 +125,13 @@ router.post('/test',
     },
     (req,res)=>{
         console.log("final round")
-        res.status(400).json({msg:"Done Stage"})
+        res.status(200).json({msg:"Done Stage"})
     }      
 )
 
 router.post('/test-private',
-    passport.authenticate('jwt',{session:false}),
+    //passport.authenticate('jwt',{session:false}),
+    
     // (req,res,next)=>{
     //     if(req.user.userType === "driver"){
     //         next()
@@ -121,9 +139,11 @@ router.post('/test-private',
     //         res.json({msg:'You have no permisson'})
     //     }
     // },
-    authorizing('admin'),
+    
+    //   authorizing('admin'),
+    authenticating,
     (req,res)=>{
-        res.json({msg:"Success"})
+        res.status(200).json({msg:"Success"})
     }
 )
 
@@ -234,4 +254,8 @@ router.post("/update/:id",
             return res.status(400).json({msg:"Error Update Data"})})
             
 })
+
+
+
+
 module.exports = router;
